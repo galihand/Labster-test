@@ -19,9 +19,46 @@ class Restaurant {
 
     if (this.openingHours) {
       this.openingHours.forEach((item, key) => {
-        temp.push(`${DAY_OF_WEEK_NAMES.get(key)}: ${item.getOpen()}-${item.getClose()}`)
+        if (temp.length === 0) {
+          temp.push({
+            day: DAY_OF_WEEK_NAMES.get(key),
+            open: item.getOpen(),
+            close: item.getClose()
+          })
+        } else {
+          // console.log(item.getOpen(), temp[temp.length - 1].open)
+          if (item.getOpen() === temp[temp.length - 1].open && item.getClose() === temp[temp.length - 1].close) {
+            let spliting = temp[temp.length - 1].day.split(' - ')
+            if (spliting.length === 2) {
+              let newDay = ''
+              spliting.splice(1, 1, DAY_OF_WEEK_NAMES.get(key))
+              newDay = `${spliting[0]} - ${spliting[spliting.length - 1]}`
+              temp.splice(temp.length - 1, 1, {
+                day: newDay,
+                open: item.getOpen(),
+                close: item.getClose()
+              })
+            } else {
+              temp.splice(temp.length - 1, 1, {
+                day: `${temp[temp.length - 1].day} - ${DAY_OF_WEEK_NAMES.get(key)}`,
+                open: item.getOpen(),
+                close: item.getClose()
+              })
+            }
+          } else {
+            temp.push({
+              day: DAY_OF_WEEK_NAMES.get(key),
+              open: item.getOpen(),
+              close: item.getClose()
+            })
+          }
+        }
       })
-      return temp.join(', ')
+      // console.log(temp)
+      let result = temp.map((item, idx) => {
+        return `${item.day}: ${item.open}-${item.close}`
+      })
+      return result.join(', ')
     }
 
     throw new Error("Todo, add implementation");
